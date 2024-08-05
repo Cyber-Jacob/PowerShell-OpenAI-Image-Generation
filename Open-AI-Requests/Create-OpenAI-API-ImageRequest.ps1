@@ -6,7 +6,7 @@ if ($null -eq $openai_api_key) {
 $openai_api_key = ($openai_key_cred).Password | ConvertFrom-securestring -asplaintext
 
 $prompt_oai = @"
-try combining the ubiquitious powershell >_ logo and the OpenAI logo. Should include a terminal motif and an image in the terminal 
+Make a cool logo for the PowerShell language and terminal type. Make this logo fresh and have it include a terminal as well as the pwsh 7 and later >_ iconography. I love powershell!
 "@
 
 $openai_auth_headers = @{
@@ -39,6 +39,6 @@ $image_request_json_content_object = $image_request.Content | ConvertFrom-Json
 
 $destination = ("./OpenAI-Generations/" + "image-"+(Get-Date -Format 'yyyy-MM-dd')+ "-" + (Get-Random -count 1 -Maximum 1000) + ".png")
 
-Start-BitsTransfer -destination $destination -Source $image_request_json_content_object.data.url
+Invoke-WebRequest -URI $image_request_json_content_object.data.url -Method "GET" -outfile $destination
 write-output "============"
 write-output $image_request.Content
