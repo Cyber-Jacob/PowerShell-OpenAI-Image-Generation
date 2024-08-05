@@ -7,6 +7,6 @@ This script is a candidate to turn into a module. This will likely take the form
 
 ---
 
-##BITS Transfer
+##IWR Vs. Start-BITSTransfer
+Invoke-WebRequest has replaced Start-BITSTransfer for cross-platform compatibility.
 
-This script makes use of the BITSTransfer tool, as such this requires a user session. When trying to use the BITS Transfer for an account without an active user session, the download will fail. This can be replaced with other commands to perform web requests.
