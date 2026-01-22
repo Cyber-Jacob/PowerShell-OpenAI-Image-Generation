@@ -6,7 +6,9 @@ if ($null -eq $openai_api_key) {
 $openai_api_key = ($openai_key_cred).Password | ConvertFrom-securestring -asplaintext
 
 $prompt_oai = @"
-Make a cool logo for the PowerShell language and terminal type. Make this logo fresh and have it include a terminal as well as the pwsh 7 and later >_ iconography. I love powershell!
+**Cyber Security:**
+   - "A mission patch for PowerShell with elements like a shield, P, dollar sign, lock, and binary code, symbolizing security and
+protection.
 "@
 
 $openai_auth_headers = @{
@@ -14,9 +16,9 @@ $openai_auth_headers = @{
     }
 
 $openai_prompt_params = @{
-    "model" = "dall-e-3"
+    "model" = "gpt-image-1.5"
     "prompt" = $prompt_oai
-    "quality" = "hd"
+    "quality" = "high"
     "n" = 1
     "size" = "1024x1024"
 }
@@ -35,10 +37,20 @@ $image_creation_request_splat_parameters = @{
 $image_request = Invoke-WebRequest @image_creation_request_splat_parameters
 write-output $image_request
 $image_request | ForEach-Object {write-output $_}
-$image_request_json_content_object = $image_request.Content | ConvertFrom-Json
 
-$destination = ("./OpenAI-Generations/" + "image-"+(Get-Date -Format 'yyyy-MM-dd')+ "-" + (Get-Random -count 1 -Maximum 1000) + ".png")
+$image_b64_object=($image_request.Content | convertfrom-json).data.b64_json
 
-Invoke-WebRequest -URI $image_request_json_content_object.data.url -Method "GET" -outfile $destination
+$destination = ("./OpenAI-Generations/" + "image-"+(Get-Date -Format 'yyyy-MM-dd_hh:mm:ss')+ "-" + (Get-Random -count 1 -Maximum 1000) + ".png")
+
+$b64bytes = [Convert]::FromBase64String($image_b64_object)
+[System.IO.File]::WriteAllBytes($destination,$b64bytes)
+
 write-output "============"
 write-output $image_request.Content
+if (Test-Path $destination){
+    Write-output "Image saved to $destination.`nPrompt:`n$prompt_oai`n"
+}
+
+else {
+    Write-output "Image could not be saved to $destination."
+}
